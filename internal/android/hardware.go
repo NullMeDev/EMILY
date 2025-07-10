@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/null/emily/internal/config"
-	"github.com/null/emily/internal/models"
 )
 
 // HardwareManager manages Android hardware integration

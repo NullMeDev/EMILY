@@ -481,7 +481,7 @@ func (as *AndroidService) saveThreatAlert(alert *ThreatAlert) {
 	}
 
 	// Save to alerts table or file
-	alertsDir := filepath.Join(as.config.Data.StoragePath, "alerts")
+	alertsDir := filepath.Join(as.config.Storage.DatabasePath, "alerts")
 	os.MkdirAll(alertsDir, 0755)
 	
 	alertFile := filepath.Join(alertsDir, fmt.Sprintf("%s.json", alert.ID))
@@ -512,7 +512,7 @@ func (as *AndroidService) GetStatus() *ServiceStatus {
 // getThreatCount gets total threat count
 func (as *AndroidService) getThreatCount() int {
 	// Count threat alert files
-	alertsDir := filepath.Join(as.config.Data.StoragePath, "alerts")
+	alertsDir := filepath.Join(as.config.Storage.DatabasePath, "alerts")
 	files, err := filepath.Glob(filepath.Join(alertsDir, "*.json"))
 	if err != nil {
 		return 0

@@ -17,7 +17,7 @@ import (
 type AutonomousEngine struct {
 	config     *config.Config
 	db         *database.Database
-	scanner    *scanner.Scanner
+	scanner    *scanner.Manager
 	intel      *intelligence.IntelligenceEngine
 	
 	// Advanced modules
@@ -124,7 +124,7 @@ type Location struct {
 }
 
 // NewAutonomousEngine creates a new autonomous engine
-func NewAutonomousEngine(cfg *config.Config, db *database.Database, scanner *scanner.Scanner, intel *intelligence.IntelligenceEngine) (*AutonomousEngine, error) {
+func NewAutonomousEngine(cfg *config.Config, db *database.Database, scanner *scanner.Manager, intel *intelligence.IntelligenceEngine) (*AutonomousEngine, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	
 	engine := &AutonomousEngine{

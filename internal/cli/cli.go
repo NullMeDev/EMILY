@@ -79,7 +79,7 @@ func scanCmd() *cobra.Command {
 			}
 			defer db.Close()
 
-			scanner, err := scanner.New(cfg, db)
+	scanner, err := scanner.NewManager(cfg, db)
 			if err != nil {
 				return fmt.Errorf("failed to initialize scanner: %w", err)
 			}
@@ -94,7 +94,7 @@ func scanCmd() *cobra.Command {
 				fmt.Printf("Starting %s scan for %s...\n", scanType, duration)
 			}
 
-			result, err := scanner.Scan(scanType, scanDuration)
+result, err := scanner.Scan(scanType, scanDuration)
 			if err != nil {
 				return fmt.Errorf("scan failed: %w", err)
 			}
@@ -169,7 +169,7 @@ func monitorCmd() *cobra.Command {
 			}
 			defer db.Close()
 
-			scanner, err := scanner.New(cfg, db)
+	scanner, err := scanner.NewManager(cfg, db)
 			if err != nil {
 				return fmt.Errorf("failed to initialize scanner: %w", err)
 			}
@@ -192,8 +192,8 @@ func monitorCmd() *cobra.Command {
 				cancel()
 			}()
 
-			// Start scanner
-			if err := scanner.Start(); err != nil {
+// Start scanner
+			if err := scanner.Start(ctx); err != nil {
 				return fmt.Errorf("failed to start scanner: %w", err)
 			}
 
@@ -488,7 +488,7 @@ exploits against surveillance devices.`,
 			}
 			defer db.Close()
 
-			scanner, err := scanner.New(cfg, db)
+	scanner, err := scanner.NewManager(cfg, db)
 			if err != nil {
 				return fmt.Errorf("failed to initialize scanner: %w", err)
 			}
