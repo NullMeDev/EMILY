@@ -7,10 +7,11 @@ import (
 	"github.com/null/emily/internal/cli"
 )
 
+// These can be overridden at build time with -ldflags
 var (
-	version = "1.0.0-dev"
-	commit  = "unknown"
-	date    = "unknown"
+	version = "1.0.0"
+	commit  = "a753988"
+	date    = "2025-07-10"
 )
 
 func main() {

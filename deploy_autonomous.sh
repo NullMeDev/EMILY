@@ -46,7 +46,7 @@ check_dependencies() {
     
     # Required packages
     local packages=(
-        "python3" "python3-pip" "python3-venv"
+        "golang" "build-essential"
         "aircrack-ng" "bluetooth" "bluez-tools"
         "iw" "rfkill" "tcpdump"
         "systemd" "curl" "git"

@@ -1,14 +1,16 @@
-# EMILY - Enhanced Mobile Intelligence for Location-aware Yields
+# EMILY v1.0.0 - Enhanced Mobile Intelligence for Location-aware Yields
 
 ## 🧠 Overview
-EMILY is an advanced autonomous surveillance detection and signal intelligence tool that runs on Linux and Android. It performs passive scanning, forensic collection, threat detection, and optionally offensive countermeasures and signal attacks.
+EMILY is an advanced autonomous surveillance detection and signal intelligence tool written entirely in **Go**. It runs on Linux, Android, Windows, and macOS, performing passive scanning, forensic collection, threat detection, and sophisticated counter-surveillance analysis.
 
-**🔍 Think Kali Linux + Flipper Zero + ZeroTrace, in your pocket.**
+**🔍 Think Kali Linux + Flipper Zero + ZeroTrace, in your pocket - but written in Go for maximum performance and portability.**
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)](#)
 [![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](#)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](#)
 [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Android%20%7C%20Windows%20%7C%20macOS-lightgrey)](#)
+[![Language](https://img.shields.io/badge/language-Go-00ADD8)](#)
 
 ## 🚀 Features
 
@@ -46,67 +48,115 @@ EMILY is an advanced autonomous surveillance detection and signal intelligence t
 - **Windows**: Core functionality with Windows-specific optimizations
 - **macOS**: Darwin-compatible build with system integration
 
-## Quick Start
+## 🚀 Quick Start
+
+### Prerequisites
+- Go 1.21 or higher
+- Linux, macOS, Windows, or Android (via Termux)
+- Optional: Root/admin privileges for advanced features
+- Optional: Hardware (RTL-SDR, HackRF) for spectrum analysis
 
 ### Installation
+
+#### Method 1: Binary Release (Recommended)
+```bash
+# Download pre-built binaries from releases
+wget https://github.com/NullMeDev/EMILY/releases/latest/download/emily-linux-amd64
+chmod +x emily-linux-amd64
+./emily-linux-amd64 --version
+```
+
+#### Method 2: Build from Source
 ```bash
 # Clone the repository
-git clone https://github.com/null/emily.git
+git clone https://github.com/NullMeDev/EMILY.git
 cd EMILY
 
-# Install dependencies
-pip install -r requirements.txt
+# Build for your platform
+go build -o emily ./cmd/emily
+
+# Or build for specific platforms
+GOOS=linux GOARCH=amd64 go build -o emily-linux ./cmd/emily
+GOOS=android GOARCH=arm64 go build -o emily-android ./cmd/emily
+GOOS=windows GOARCH=amd64 go build -o emily.exe ./cmd/emily
+GOOS=darwin GOARCH=amd64 go build -o emily-macos ./cmd/emily
 
 # Basic usage
-python emily.py scan
+./emily scan --duration 30s
 
-# Launch autonomous mode (BETA)
-python emily.py autonomous
+# Launch autonomous mode
+./emily autonomous
 ```
 
-### Autonomous Mode
-The cutting-edge autonomous mode runs continuous threat detection and response:
-
+### Android Installation (Termux)
 ```bash
-# Full autonomous mode
-python emily.py autonomous
+# Install Termux from F-Droid
+# In Termux:
+pkg update && pkg upgrade
+pkg install golang git
 
-# Safe mode (no exploitation/countermeasures)
-python emily.py autonomous --no-exploit --no-counter
+# Clone and build
+git clone https://github.com/NullMeDev/EMILY.git
+cd EMILY
+go build -o emily ./cmd/emily
 
-# Evidence collection only
-python emily.py autonomous --no-exploit --no-counter
-
-# Custom scan interval (default: 30s)
-python emily.py autonomous --interval 60
+# Run on Android
+./emily scan --duration 10s --debug
 ```
 
-### Traditional CLI Usage
+### First Run
 ```bash
-# Build the CLI tool
-make build
-
 # Initialize configuration
-./bin/emily config init --debug
+./emily config init
 
 # Perform a quick scan
-./bin/emily scan --duration 30s --type full
+./emily scan --duration 30s --type full
 
 # Start continuous monitoring
-./bin/emily monitor
+./emily monitor
 
-# List detected devices
-./bin/emily list
+# Check version
+./emily version
+```
 
-# Show system status
-./bin/emily status
+### Advanced CLI Usage
+```bash
+# Initialize configuration
+./emily config init --debug
 
-# Enable stealth mode
-./bin/emily stealth enable
+# Perform different types of scans
+./emily scan --duration 30s --type full      # Full spectrum scan
+./emily scan --duration 10s --type wifi     # WiFi only
+./emily scan --duration 10s --type bluetooth # Bluetooth only
+./emily scan --duration 15s --type cellular # Cellular towers
 
-# Real WiFi/Bluetooth scanning (requires privileges)
-sudo ./bin/emily scan --duration 10s --type wifi
-sudo ./bin/emily scan --duration 10s --type bluetooth
+# Start continuous monitoring
+./emily monitor
+
+# Start autonomous mode with different settings
+./emily autonomous                           # Full autonomous mode
+./emily autonomous --safe                    # Safe mode (no offensive actions)
+./emily autonomous --interval 60s            # Custom scan interval
+
+# List detected devices and threats
+./emily list
+./emily threats
+
+# Show system status and statistics
+./emily status
+./emily stats
+
+# Enable stealth and advanced features
+./emily stealth enable
+./emily hardware --enable-sdr               # Enable SDR support
+
+# Real hardware scanning (requires privileges on Linux)
+sudo ./emily scan --duration 10s --type wifi --real
+sudo ./emily scan --duration 10s --type bluetooth --real
+
+# Export results and evidence
+./emily export --format json --output results.json
+./emily evidence --export --format forensic
 ```
 
 ## Architecture
@@ -164,6 +214,25 @@ sudo ./bin/emily scan --duration 10s --type bluetooth
    - ✅ Autonomous operation mode
    - ✅ Release packaging and deployment
 
+## Roadmap
+
+EMILY has reached its initial full release version with the following roadmap:
+
+### Short Term Goals
+- Enhance Android app interface and usability
+- Add support for more advanced threat analytics
+- Improve integration testing and automation
+
+### Medium Term Goals
+- Implement cloud sync for data collection
+- Expand GUI visualization capabilities
+- Integrate more AI-driven analytics
+
+### Long Term Goals
+- Full automation of security response workflows
+- Expanded device support and hardware compatibility
+- Broaden user customization options for threat detection
+
 ## Current Status - PROJECT COMPLETE! 🎉
 
 **✅ FULLY IMPLEMENTED FEATURES:**
@@ -219,10 +288,25 @@ sudo ./bin/emily scan --duration 10s --type bluetooth
 - **Recommended**: Root access for advanced features
 - **Desktop**: Linux/macOS for development and testing
 
+## Feature Summary
+
+### Core Features
+- Advanced signal detection for WiFi, Bluetooth, Cellular, NFC
+- Autonomous threat management and risk assessment
+- Real-time surveillance detection and response
+
+### Intelligence and Analysis
+- Machine learning-driven classification and behaviour analysis
+- Temporal and spatial pattern identification
+
+### Platform Compatibility
+- Cross-compatible with Linux, Android, Windows, and macOS
+- Extensible for use with SDRs, hardware mods, and plugins
+
 ## Demo
 ```bash
 # Example scan output
-$ sudo ./bin/emily scan --debug --duration 10s
+$ ./emily scan --debug --duration 10s
 Starting full scan for 10s...
 
 Scan completed in 2.1s

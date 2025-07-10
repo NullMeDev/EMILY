@@ -46,15 +46,6 @@ check_requirements() {
         exit 1
     fi
     
-    # Check Python
-    if command -v python3 &> /dev/null; then
-        PYTHON_VERSION=$(python3 --version)
-        log_success "Python found: $PYTHON_VERSION"
-    else
-        log_error "Python3 not found. Please install Python 3.8 or later."
-        exit 1
-    fi
-    
     # Check Git
     if command -v git &> /dev/null; then
         log_success "Git found"
@@ -76,13 +67,10 @@ build_system() {
         log_error "Failed to build main binary"
         exit 1
     fi
-    
+
     # Set permissions
     chmod +x bin/emily
     chmod +x deploy_autonomous.sh
-    chmod +x test_autonomous.py
-    chmod +x test_autonomous_safe.py
-    chmod +x test_comprehensive.py
     
     log_success "Build completed successfully"
 }
@@ -202,7 +190,6 @@ create_deployment() {
     
     # Copy binaries
     cp bin/emily "$DEPLOY_DIR/"
-    cp *.py "$DEPLOY_DIR/"
     cp *.sh "$DEPLOY_DIR/"
     cp config.yaml "$DEPLOY_DIR/" 2>/dev/null || log_warning "No config.yaml to copy"
     cp README.md "$DEPLOY_DIR/"
@@ -228,7 +215,6 @@ EMILY Surveillance Detection System - Deployment Report
 Deployment Date: $(date)
 System: $(uname -a)
 Go Version: $(go version 2>/dev/null || echo "Not available")
-Python Version: $(python3 --version 2>/dev/null || echo "Not available")
 
 DEPLOYED COMPONENTS:
 ===================
@@ -290,7 +276,7 @@ USAGE EXAMPLES:
 ./emily stealth enable
 
 # Run comprehensive tests
-./test_comprehensive.py
+go test ./test/... -v
 
 NOTES:
 ======
