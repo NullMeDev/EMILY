@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/null/emily/internal/config"
@@ -475,8 +476,7 @@ func (c *LinuxCellularScanner) GetCellInfo() (*models.CellularDevice, error) {
 
 // DetectIMSICatcher attempts to detect IMSI catcher presence
 func (c *LinuxCellularScanner) DetectIMSICatcher() (bool, error) {
-	// Basic IMSI catcher detection logic
-	// This is a simplified implementation that looks for suspicious patterns
+	// Advanced IMSI catcher detection with multiple indicators
 	
 	// Get current cell info
 	cellInfo, err := c.GetCellInfo()
@@ -484,25 +484,241 @@ func (c *LinuxCellularScanner) DetectIMSICatcher() (bool, error) {
 		return false, err
 	}
 
-	// Check for suspicious indicators:
+	suspiciousIndicators := 0
+	maxIndicators := 10
+
 	// 1. Downgrade to 2G/GSM when 4G/LTE should be available
 	if cellInfo.Technology == "GSM" || cellInfo.Technology == "2G" {
-		return true, nil // Potential downgrade attack
+		suspiciousIndicators += 3 // High weight for technology downgrade
 	}
 
 	// 2. Unknown or suspicious operator names
-	suspiciousOperators := []string{"test", "debug", "temp", ""}
+	suspiciousOperators := []string{"test", "debug", "temp", "", "private", "lab", "research"}
 	for _, suspicious := range suspiciousOperators {
 		if strings.Contains(strings.ToLower(cellInfo.Operator), suspicious) {
-			return true, nil
+			suspiciousIndicators += 2
+			break
 		}
 	}
 
-	// 3. Could add more sophisticated detection logic here
-	// such as comparing with known good cell tower database,
-	// checking for rapid cell changes, etc.
+	// 3. Check for LAC (Location Area Code) anomalies
+	if c.checkLACAnomaly() {
+		suspiciousIndicators += 2
+	}
 
-	return false, nil
+	// 4. Check for rapid cell tower changes
+	if c.checkRapidCellChanges() {
+		suspiciousIndicators += 2
+	}
+
+	// 5. Check for unusual signal strength patterns
+	if c.checkSignalAnomalies() {
+		suspiciousIndicators += 1
+	}
+
+	// 6. Check for missing or invalid cell parameters
+	if c.checkMissingCellParameters(cellInfo) {
+		suspiciousIndicators += 1
+	}
+
+	// Return true if we have enough suspicious indicators
+	return float64(suspiciousIndicators)/float64(maxIndicators) > 0.5, nil
+}
+
+// checkLACAnomaly detects Location Area Code anomalies
+func (c *LinuxCellularScanner) checkLACAnomaly() bool {
+	// Get current LAC values
+	cmd := exec.Command("mmcli", "-L")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	modemNumbers := c.extractModemNumbers(string(output))
+	if len(modemNumbers) == 0 {
+		return false
+	}
+
+	// Query detailed modem info for LAC
+	cmd = exec.Command("mmcli", "-m", modemNumbers[0], "--location-get")
+	output, err = cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "lac:") {
+			re := regexp.MustCompile(`lac: (\d+)`)
+			if matches := re.FindStringSubmatch(line); len(matches) > 1 {
+				if lac, err := strconv.Atoi(matches[1]); err == nil {
+					// Check for suspicious LAC values
+					// LAC 0 or 65535 are often used by IMSI catchers
+					if lac == 0 || lac == 65535 {
+						return true
+					}
+					// LAC values outside typical ranges
+					if lac < 1 || lac > 65534 {
+						return true
+					}
+				}
+			}
+		}
+	}
+	return false
+}
+
+// CellHistory tracks cell tower connection history
+type CellHistory struct {
+	CellID    string
+	LAC       string
+	Timestamp time.Time
+	RSSI      int
+}
+
+var cellHistory []CellHistory
+var cellHistoryMutex sync.RWMutex
+
+// checkRapidCellChanges detects rapid cell tower switching
+func (c *LinuxCellularScanner) checkRapidCellChanges() bool {
+	// Get current cell info
+	cmd := exec.Command("mmcli", "-L")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	modemNumbers := c.extractModemNumbers(string(output))
+	if len(modemNumbers) == 0 {
+		return false
+	}
+
+	// Get current cell details
+	cmd = exec.Command("mmcli", "-m", modemNumbers[0], "--location-get")
+	output, err = cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	var currentCell CellHistory
+	currentCell.Timestamp = time.Now()
+
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "cell-id:") {
+			re := regexp.MustCompile(`cell-id: (\d+)`)
+			if matches := re.FindStringSubmatch(line); len(matches) > 1 {
+				currentCell.CellID = matches[1]
+			}
+		}
+		if strings.Contains(line, "lac:") {
+			re := regexp.MustCompile(`lac: (\d+)`)
+			if matches := re.FindStringSubmatch(line); len(matches) > 1 {
+				currentCell.LAC = matches[1]
+			}
+		}
+	}
+
+	// Add to history
+	cellHistoryMutex.Lock()
+	cellHistory = append(cellHistory, currentCell)
+	// Keep only last 50 entries
+	if len(cellHistory) > 50 {
+		cellHistory = cellHistory[len(cellHistory)-50:]
+	}
+	cellHistoryMutex.Unlock()
+
+	// Analyze for rapid changes
+	cellHistoryMutex.RLock()
+	defer cellHistoryMutex.RUnlock()
+
+	if len(cellHistory) < 5 {
+		return false
+	}
+
+	// Check for rapid switching in last 5 minutes
+	recentChanges := 0
+	fiveMinutesAgo := time.Now().Add(-5 * time.Minute)
+
+	for i := len(cellHistory) - 1; i > 0; i-- {
+		if cellHistory[i].Timestamp.Before(fiveMinutesAgo) {
+			break
+		}
+		if cellHistory[i].CellID != cellHistory[i-1].CellID {
+			recentChanges++
+		}
+	}
+
+	// More than 3 cell changes in 5 minutes is suspicious
+	return recentChanges > 3
+}
+
+// checkSignalAnomalies detects unusual signal patterns
+func (c *LinuxCellularScanner) checkSignalAnomalies() bool {
+	// Get current signal strength
+	cmd := exec.Command("mmcli", "-L")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	modemNumbers := c.extractModemNumbers(string(output))
+	if len(modemNumbers) == 0 {
+		return false
+	}
+
+	cmd = exec.Command("mmcli", "-m", modemNumbers[0])
+	output, err = cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "signal quality:") {
+			re := regexp.MustCompile(`(\d+)%`)
+			if matches := re.FindStringSubmatch(line); len(matches) > 1 {
+				if quality, err := strconv.Atoi(matches[1]); err == nil {
+					// Convert to approximate RSSI
+					rssi := -113 + (quality * 60 / 100)
+					
+					// IMSI catchers often have very strong signals
+					if rssi > -40 {
+						return true // Unusually strong signal
+					}
+					
+					// Check for perfect signal (100%) which is suspicious
+					if quality == 100 {
+						return true
+					}
+				}
+			}
+		}
+	}
+
+	// Check signal strength history for sudden changes
+	cellHistoryMutex.RLock()
+	defer cellHistoryMutex.RUnlock()
+
+	if len(cellHistory) >= 3 {
+		// Check for sudden signal strength jumps
+		recent := cellHistory[len(cellHistory)-3:]
+		for i := 1; i < len(recent); i++ {
+			rssiDiff := recent[i].RSSI - recent[i-1].RSSI
+			if rssiDiff > 20 || rssiDiff < -20 {
+				// Sudden 20dB change is suspicious
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// checkMissingCellParameters checks for incomplete cell information
+func (c *LinuxCellularScanner) checkMissingCellParameters(cellInfo *models.CellularDevice) bool {
+	// IMSI catchers often don't provide complete cell information
+	return cellInfo.Operator == "" || cellInfo.Technology == ""
 }
 
 // GetType returns the scanner type

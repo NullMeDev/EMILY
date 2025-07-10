@@ -1,0 +1,82 @@
+android:
+    servicename: com.system.update.service
+    notificationid: 12345
+    foregroundservice: true
+    wakelock: true
+    batteryoptimized: false
+    bootstart: true
+    rootrequired: false
+core:
+    appname: EMILY
+    version: 1.0.0-dev
+    debug: true
+    loglevel: info
+    scaninterval: 30s
+    maxdeviceage: 24h0m0s
+    dataretention: 168h0m0s
+detection:
+    wifi:
+        enabled: true
+        interface: ""
+        channels:
+            - 1
+            - 6
+            - 11
+            - 36
+            - 40
+            - 44
+            - 48
+            - 149
+            - 153
+            - 157
+            - 161
+        scanduration: 10
+        minsignallevel: -80
+        hiddenssid: true
+        whitelist: []
+    bluetooth:
+        enabled: true
+        scanduration: 10
+        lowenergy: true
+        classic: true
+        whitelist: []
+    cellular:
+        enabled: true
+        imsicatcher: true
+        signalstrength: true
+        celltowermapping: true
+    nfc:
+        enabled: true
+        passive: true
+        tagdetection: true
+    threats:
+        hiddencameras: true
+        audiodevices: true
+        gpstrackers: true
+        rogueaps: true
+        unknowndevices: true
+notifications:
+    enabled: true
+    discord: false
+    webhookurl: ""
+    alerts:
+        newdevice: true
+        threatlevel: 3
+        signalloss: false
+        surveillance: true
+stealth:
+    hiddenmode: true
+    fakeappname: System Update
+    fakeicon: system_update
+    silentmode: true
+    antiforensics: true
+    encryptedstorage: true
+    remotewipe: true
+    macrandomization: true
+storage:
+    databasepath: data/phantom.db
+    cachepath: cache/
+    logpath: logs/
+    maxsize: 104857600
+    compresslogs: true
+    encryptionkey: ""

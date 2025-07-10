@@ -9,7 +9,7 @@ android:
 core:
     appname: EMILY
     version: 1.0.0-dev
-    debug: true
+    debug: false
     loglevel: info
     scaninterval: 30s
     maxdeviceage: 24h0m0s
@@ -65,10 +65,10 @@ notifications:
         signalloss: false
         surveillance: true
 stealth:
-    hiddenmode: true
+    hiddenmode: false
     fakeappname: System Update
     fakeicon: system_update
-    silentmode: true
+    silentmode: false
     antiforensics: true
     encryptedstorage: true
     remotewipe: true
@@ -79,4 +79,4 @@ storage:
     logpath: logs/
     maxsize: 104857600
     compresslogs: true
-    encryptionkey: dfRxCPRLc3gTe/mdUHLzvC3v3bImmpbbZkrViP6P6z4=
+    encryptionkey: G45uy+BvuO6hxHRTom9nX2aipXB2hQjGd04cCq0d+OI=

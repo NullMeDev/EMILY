@@ -1,0 +1,61 @@
+================================================================================
+EMILY COMPREHENSIVE TEST REPORT (Go Version)
+================================================================================
+Test run completed at: 2025-07-10 05:33:13
+Total test duration: 42.21 seconds
+
+PHASE4: 0/4 tests passed
+  - android_hardware_detection: FAIL
+  - adb_available: FAIL
+  - android_connected: FAIL
+  - android_hardware: FAIL
+
+PHASE5: 1/4 tests passed
+  - rtlsdr_available: FAIL
+  - hackrf_available: FAIL
+  - spectrum_analysis: FAIL
+  - countermeasures: PASS
+
+PHASE6: 2/5 tests passed
+  - autonomous_mode: PASS
+  - stealth_mode: PASS
+  - monitoring_mode: FAIL
+  - config_persistence: FAIL
+  - evidence_collection: FAIL
+
+PERFORMANCE: 4/4 tests passed
+  - scan_speed: PASS
+  - memory_efficiency: PASS
+  - database_integrity: PASS
+  - error_handling: PASS
+
+SECURITY: 3/3 tests passed
+  - encryption: PASS
+  - stealth_operation: PASS
+  - privilege_handling: PASS
+
+PHASE1: 4/4 tests passed
+  - config_init: PASS
+  - database_status: PASS
+  - cli_help: PASS
+  - basic_scan: PASS
+
+PHASE2: 5/5 tests passed
+  - wifi_scan: PASS
+  - bluetooth_scan: PASS
+  - cellular_scan: PASS
+  - nfc_scan: PASS
+  - full_scan: PASS
+
+PHASE3: 3/5 tests passed
+  - behavioral_analysis: PASS
+  - threat_analysis: FAIL
+  - device_intelligence: FAIL
+  - ml_classification: PASS
+  - behavioral_analysis: PASS
+
+================================================================================
+OVERALL RESULTS: 22/34 tests passed
+Success rate: 64.7%
+⚠️  MODERATE! System has significant issues to address
+================================================================================

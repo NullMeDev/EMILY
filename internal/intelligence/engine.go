@@ -27,6 +27,7 @@ type IntelligenceEngine struct {
 	alertManager   *AlertManager
 	patternMatcher *PatternMatcher
 	riskCalculator *RiskCalculator
+	mlClassifier   *MLClassifier
 }
 
 // ThreatProfile represents a known threat signature
@@ -127,6 +128,7 @@ func NewIntelligenceEngine(cfg *config.Config, db *database.Database) (*Intellig
 		alertManager:   NewAlertManager(cfg, db),
 		patternMatcher: NewPatternMatcher(),
 		riskCalculator: NewRiskCalculator(),
+		mlClassifier:   NewMLClassifier(),
 	}
 
 	// Load built-in threat profiles
@@ -210,6 +212,33 @@ func (ie *IntelligenceEngine) AnalyzeDevice(device *models.Device) (*ThreatAnaly
 	// Pattern analysis
 	patterns := ie.patternMatcher.AnalyzePatterns(device)
 	result.Metadata["patterns"] = patterns
+
+	// Machine learning classification
+	mlResults, err := ie.mlClassifier.ClassifyDevice(device)
+	if err == nil && len(mlResults) > 0 {
+		// Use highest confidence ML result
+		bestMLResult := mlResults[0]
+		if bestMLResult.Confidence > 0.7 { // High confidence threshold
+			// Boost threat level if ML is confident
+			mlThreatBoost := int(bestMLResult.Probability * 5) // Scale to 0-5
+			result.ThreatLevel = int(math.Max(float64(result.ThreatLevel), float64(mlThreatBoost)))
+			
+			// Add ML insights to metadata
+			result.Metadata["ml_classification"] = map[string]interface{}{
+				"threat_type": bestMLResult.ThreatType,
+				"confidence":  bestMLResult.Confidence,
+				"probability": bestMLResult.Probability,
+			}
+			
+			// Add ML-specific recommendations
+			if bestMLResult.Confidence > 0.8 {
+				result.Recommendations = append(result.Recommendations, 
+					fmt.Sprintf("ML model detected %s with %.1f%% confidence", 
+						bestMLResult.ThreatType, bestMLResult.Confidence*100))
+			}
+		}
+		result.Metadata["ml_results"] = mlResults
+	}
 
 	// Update device threat level
 	device.ThreatLevel = result.ThreatLevel

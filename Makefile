@@ -16,6 +16,12 @@ build:
 	@echo "Building ${BINARY_NAME}..."
 	go build ${LDFLAGS} -o bin/${BINARY_NAME} cmd/emily/main.go
 
+# Build test suite
+.PHONY: build-tests
+build-tests:
+	@echo "Building test suite..."
+	go build ${LDFLAGS} -o bin/emily-test cmd/emily-test/main.go
+
 # Build for Android (ARM64)
 .PHONY: build-android
 build-android:
@@ -39,11 +45,35 @@ deps:
 	go mod download
 	go mod tidy
 
-# Run tests
+# Run Go unit tests
 .PHONY: test
 test:
-	@echo "Running tests..."
+	@echo "Running Go unit tests..."
 	go test ./...
+
+# Run comprehensive test suite
+.PHONY: test-comprehensive
+test-comprehensive: build build-tests
+	@echo "Running comprehensive test suite..."
+	./bin/emily-test -suite=comprehensive
+
+# Run autonomous test suite
+.PHONY: test-autonomous
+test-autonomous: build build-tests
+	@echo "Running autonomous test suite..."
+	./bin/emily-test -suite=autonomous
+
+# Run resource-safe test suite
+.PHONY: test-safe
+test-safe: build build-tests
+	@echo "Running resource-safe test suite..."
+	./bin/emily-test -suite=resource-safe
+
+# Run quick tests
+.PHONY: test-quick
+test-quick: build build-tests
+	@echo "Running quick test suite..."
+	./bin/emily-test -quick
 
 # Run with race detection
 .PHONY: test-race
@@ -130,25 +160,30 @@ release: clean build-all
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  build        - Build the binary"
-	@echo "  build-android - Build for Android"
-	@echo "  build-all    - Build for all platforms"
-	@echo "  deps         - Install dependencies"
-	@echo "  test         - Run tests"
-	@echo "  test-race    - Run tests with race detection"
-	@echo "  coverage     - Generate coverage report"
-	@echo "  clean        - Clean build artifacts"
-	@echo "  run          - Build and run"
-	@echo "  install      - Install binary to /usr/local/bin"
-	@echo "  dev          - Run in development mode"
-	@echo "  init-config  - Initialize configuration"
-	@echo "  lint         - Run linter"
-	@echo "  fmt          - Format code"
-	@echo "  security     - Run security scan"
-	@echo "  docs         - Generate documentation"
-	@echo "  docker-build - Build Docker image"
-	@echo "  release      - Create release package"
-	@echo "  help         - Show this help"
+	@echo "  build             - Build the binary"
+	@echo "  build-tests       - Build test suite"
+	@echo "  build-android     - Build for Android"
+	@echo "  build-all         - Build for all platforms"
+	@echo "  deps              - Install dependencies"
+	@echo "  test              - Run Go unit tests"
+	@echo "  test-comprehensive - Run comprehensive test suite"
+	@echo "  test-autonomous   - Run autonomous test suite"
+	@echo "  test-safe         - Run resource-safe test suite"
+	@echo "  test-quick        - Run quick test suite"
+	@echo "  test-race         - Run tests with race detection"
+	@echo "  coverage          - Generate coverage report"
+	@echo "  clean             - Clean build artifacts"
+	@echo "  run               - Build and run"
+	@echo "  install           - Install binary to /usr/local/bin"
+	@echo "  dev               - Run in development mode"
+	@echo "  init-config       - Initialize configuration"
+	@echo "  lint              - Run linter"
+	@echo "  fmt               - Format code"
+	@echo "  security          - Run security scan"
+	@echo "  docs              - Generate documentation"
+	@echo "  docker-build      - Build Docker image"
+	@echo "  release           - Create release package"
+	@echo "  help              - Show this help"
 
 # Default goal
 .DEFAULT_GOAL := help
