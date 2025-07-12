@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">System Update</string>
+    <string name="service_name">System Update Service</string>
+    <string name="service_description">Background system monitoring service</string>
+    <string name="notification_title">System Update</string>
+    <string name="notification_text">System monitoring active</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_logs">Logs</string>
+    <string name="action_about">About</string>
+    
+    <!-- Service states -->
+    <string name="service_running">RUNNING</string>
+    <string name="service_stopped">STOPPED</string>
+    
+    <!-- Button labels -->
+    <string name="start_service">Start</string>
+    <string name="stop_service">Stop</string>
+    <string name="quick_scan">Quick Scan</string>
+    <string name="connect_vps">Connect to VPS</string>
+    
+    <!-- Settings -->
+    <string name="stealth_mode">Stealth Mode</string>
+    <string name="auto_start">Auto Start</string>
+    <string name="vps_connection">VPS Connection</string>
+    <string name="vps_description">Connect to remote EMILY backend</string>
+    
+    <!-- Permissions -->
+    <string name="permission_required">Permission Required</string>
+    <string name="permission_location">Location permission is required for WiFi scanning</string>
+    <string name="permission_bluetooth">Bluetooth permission is required for device scanning</string>
+    <string name="permission_phone">Phone permission is required for cellular scanning</string>
+    <string name="permission_storage">Storage permission is required for data logging</string>
+    
+    <!-- Alerts -->
+    <string name="threat_detected">Threat Detected</string>
+    <string name="threats_found">%d surveillance threats detected!</string>
+    <string name="scan_complete">Scan Complete</string>
+    <string name="devices_found">%d devices found</string>
+    
+    <!-- Errors -->
+    <string name="error_wifi_disabled">WiFi is disabled</string>
+    <string name="error_bluetooth_disabled">Bluetooth is disabled</string>
+    <string name="error_location_disabled">Location services are disabled</string>
+    <string name="error_permissions_denied">Required permissions denied</string>
+    
+    <!-- About -->
+    <string name="about_title">About EMILY</string>
+    <string name="about_text">EMILY v1.0.0\n\nEnhanced Mobile Intelligence for Location-aware Yields\n\nAdvanced surveillance detection tool for Android devices.\n\nThis app helps detect potential surveillance devices in your vicinity including hidden cameras, audio recorders, GPS trackers, and other monitoring equipment.</string>
+    
+    <!-- VPS -->
+    <string name="vps_connecting">Connecting to VPS...</string>
+    <string name="vps_connected">Connected to VPS</string>
+    <string name="vps_disconnected">Disconnected from VPS</string>
+    <string name="vps_error">VPS connection error</string>
+    
+    <!-- Stealth -->
+    <string name="stealth_enabled">Stealth mode enabled</string>
+    <string name="stealth_disabled">Stealth mode disabled</string>
+    <string name="stealth_description">Hide app interface and run silently</string>
+</resources>

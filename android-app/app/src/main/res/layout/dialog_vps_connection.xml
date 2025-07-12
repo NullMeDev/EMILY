@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Configure VPS Connection"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etVpsEndpoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="VPS Endpoint (e.g., https://your-vps.com)"
+            android:inputType="textUri"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintEnabled="true"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etVpsApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="API Key"
+            android:inputType="textPassword"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTestConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Test Connection"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/blue"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    <TextView
+        android:id="@+id/tvConnectionStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter VPS details and test connection"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚠️ VPS Connection enables remote monitoring and data synchronization. Make sure you trust the VPS server."
+        android:textSize="12sp"
+        android:textColor="@color/orange"
+        android:background="@color/background_light"
+        android:padding="8dp" />
+
+</LinearLayout>
